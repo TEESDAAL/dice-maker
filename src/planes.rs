@@ -5,7 +5,7 @@ pub struct Plane {
     pub x: f64,
     pub y: f64,
     pub z: f64,
-    pub bias: f64
+    pub bias: f64,
 }
 
 impl Plane {
@@ -21,12 +21,12 @@ impl Plane {
         let [a1, b1, _, d1] = self.unpack();
 
         let [a2, b2, _, d2] = other.unpack();
-        let x = (d2*b1 - b2*d1) / (a2*b1 - a1*b2);
-        let y = (d1 - a1*x)/b1;
+        let x = (d2 * b1 - b2 * d1) / (a2 * b1 - a1 * b2);
+        let y = (d1 - a1 * x) / b1;
         let z = 0.0;
         Some(Line {
             direction: norm,
-            position: Vector([x, y, z])
+            position: Vector([x, y, z]),
         })
     }
 
@@ -42,9 +42,8 @@ impl Plane {
 #[derive(Debug)]
 pub struct Line {
     direction: Vector<3>,
-    position: Vector<3>
+    position: Vector<3>,
 }
-
 
 impl Line {
     // See if this line intersects with the unit circle x^2 + y^2 + z^2 = 1
@@ -56,24 +55,25 @@ impl Line {
         let Vector([nx, ny, nz]) = self.direction;
         let Vector([px, py, pz]) = self.position;
         let a = nx.powi(2) + ny.powi(2) + nz.powi(2);
-        let b = 2.0 * (nx*px + ny*py + nz*pz);
+        let b = 2.0 * (nx * px + ny * py + nz * pz);
         let c = px.powi(2) + py.powi(2) + py.powi(2) - 1.0;
 
-        b.powi(2) - 4.0*a*c
-
+        b.powi(2) - 4.0 * a * c
     }
 
-
     pub fn new(direction: Vector<3>, position: Vector<3>) -> Self {
-        Line { direction, position }
+        Line {
+            direction,
+            position,
+        }
     }
 
     pub fn format(&self) -> String {
-        format!("t{:?} + {:?}", self.direction.0, self.position.0).replace("[", "(").replace("]", ")")
+        format!("t{:?} + {:?}", self.direction.0, self.position.0)
+            .replace("[", "(")
+            .replace("]", ")")
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {
@@ -81,7 +81,7 @@ mod tests {
 
     use super::*;
     const N: usize = 100_000;
-    
+
     #[test]
     fn test_intersects_circle() {
         for _ in 0..N {
@@ -90,14 +90,15 @@ mod tests {
             let r = rng.random_range(0..=1000) as f64 / 1000.0;
             let line = Line::new(
                 Vector(rng.random()),
-                Vector([
-                    r*t.sin()*p.cos(),
-                    r*t.sin()*p.sin(),
-                    r*t.cos()
-                ])
+                Vector([r * t.sin() * p.cos(), r * t.sin() * p.sin(), r * t.cos()]),
             );
 
-            assert!(line.intersects_circle(), "{} should intersect with the unit circle. det = {}", line.format(), line.determiant())
+            assert!(
+                line.intersects_circle(),
+                "{} should intersect with the unit circle. det = {}",
+                line.format(),
+                line.determiant()
+            )
         }
     }
 }

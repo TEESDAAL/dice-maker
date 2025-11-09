@@ -1,6 +1,5 @@
 use crate::vector::Vector;
 
-
 pub trait GradientDescent<const T: usize> {
     fn parameters(&self) -> Vector<T>;
     fn loss(&self, parameters: Vector<T>) -> f64;
@@ -18,7 +17,7 @@ pub trait GradientDescent<const T: usize> {
         parameters
     }
 
-    fn numeric_gradient(&self, x: Vector<T>) -> Vector<T>  {
+    fn numeric_gradient(&self, x: Vector<T>) -> Vector<T> {
         let mut result = [0.0; T];
         let base_loss = self.loss(x);
         let e = f64::sqrt(f64::EPSILON);
@@ -34,5 +33,3 @@ pub trait GradientDescent<const T: usize> {
         Vector(result)
     }
 }
-
-

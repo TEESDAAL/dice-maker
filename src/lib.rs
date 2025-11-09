@@ -1,9 +1,9 @@
 #![feature(generic_const_exprs)]
 use rand::Rng;
 pub mod gradient_descent;
-pub mod vector;
 pub mod planes;
 pub mod point_placer;
+pub mod vector;
 
 /// theta in [0, pi]
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -40,16 +40,13 @@ impl Azimuth {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Point(PolarAngle, Azimuth);
 
-
-
 pub fn hav(x: f64) -> f64 {
     (1.0 - f64::cos(x)) / 2.0
 }
 
 pub fn ahav(x: f64) -> f64 {
-    2.0*f64::asin(f64::sqrt(x))
+    2.0 * f64::asin(f64::sqrt(x))
 }
-
 
 impl Point {
     pub fn coords(&self) -> (f64, f64) {
@@ -59,9 +56,9 @@ impl Point {
 
     pub fn cartiesian_coords(&self) -> [f64; 3] {
         [
-            f64::sin(self.0.0)*f64::cos(self.1.0),
-            f64::sin(self.0.0)*f64::sin(self.1.0),
-            f64::cos(self.0.0)
+            f64::sin(self.0.0) * f64::cos(self.1.0),
+            f64::sin(self.0.0) * f64::sin(self.1.0),
+            f64::cos(self.0.0),
         ]
     }
 
@@ -78,14 +75,14 @@ impl Point {
     }
 
     pub fn euclidian_distance(&self, other: &Point) -> f64 {
-        self.cartiesian_coords().iter().zip(other.cartiesian_coords().iter())
-            .map(|(c1, c2)| (c1-c2).powi(2))
+        self.cartiesian_coords()
+            .iter()
+            .zip(other.cartiesian_coords().iter())
+            .map(|(c1, c2)| (c1 - c2).powi(2))
             .sum::<f64>()
             .sqrt()
     }
-
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -94,12 +91,22 @@ mod tests {
     const N: usize = 100_000;
     #[test]
     fn distance_to_self_is_zero() {
-        let p  = Point::new(1.0, 1.0);
-        assert_eq!(p.distance(&p), 0.0, "The distance between {:?} and itself is not 0", p);
+        let p = Point::new(1.0, 1.0);
+        assert_eq!(
+            p.distance(&p),
+            0.0,
+            "The distance between {:?} and itself is not 0",
+            p
+        );
 
         for _ in 0..N {
             let p = Point::random();
-            assert_eq!(p.distance(&p), 0.0, "The distance between {:?} and itself is not 0", p);
+            assert_eq!(
+                p.distance(&p),
+                0.0,
+                "The distance between {:?} and itself is not 0",
+                p
+            );
         }
     }
 
@@ -107,7 +114,13 @@ mod tests {
     fn distance_to_other_not_zero() {
         for _ in 0..N {
             let (p1, p2) = (Point::random(), Point::random());
-            assert_ne!(p1.distance(&p2), 0.0, "The distance between {:?} and {:?} is 0", p1, p2);
+            assert_ne!(
+                p1.distance(&p2),
+                0.0,
+                "The distance between {:?} and {:?} is 0",
+                p1,
+                p2
+            );
         }
     }
 
@@ -126,9 +139,7 @@ mod tests {
             let long_distance = p1.distance(&p2) + p2.distance(&p3);
             let short_distance = p1.distance(&p3);
 
-            assert!(short_distance <=  long_distance);
+            assert!(short_distance <= long_distance);
         }
     }
 }
-
-
